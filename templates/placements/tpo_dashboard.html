@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}TPO Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>TPO Dashboard</h1>
+    <p>Manage placement drives and student applications.</p>
+</div>
+
+<!-- Stats Row -->
+<div class="stats-row">
+    <div class="stat-card">
+        <span class="stat-num">{{ stats.total_students }}</span>
+        <span class="stat-label">Total Students</span>
+    </div>
+    <div class="stat-card stat-green">
+        <span class="stat-num">{{ stats.placed_students }}</span>
+        <span class="stat-label">Placed</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-num">{{ stats.total_drives }}</span>
+        <span class="stat-label">Total Drives</span>
+    </div>
+    <div class="stat-card stat-blue">
+        <span class="stat-num">{{ stats.open_drives }}</span>
+        <span class="stat-label">Open Drives</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-num">{{ stats.total_applications }}</span>
+        <span class="stat-label">Applications</span>
+    </div>
+    <div class="stat-card stat-green">
+        <span class="stat-num">{{ stats.selected_applications }}</span>
+        <span class="stat-label">Selected</span>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+    <a href="{% url 'placements:drive_create' %}" class="btn btn-primary">➕ Add Drive</a>
+    <a href="{% url 'placements:company_create' %}" class="btn btn-outline">🏢 Add Company</a>
+    <a href="{% url 'placements:drive_list' %}" class="btn btn-outline">📋 All Drives</a>
+    <a href="{% url 'placements:student_list' %}" class="btn btn-outline">👩‍🎓 Students</a>
+</div>
+
+<!-- Recent Drives -->
+<div class="section-header">
+    <h2>Recent Drives</h2>
+    <a href="{% url 'placements:drive_list' %}">View All →</a>
+</div>
+
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Package</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for drive in recent_drives %}
+            <tr>
+                <td><strong>{{ drive.company.name }}</strong></td>
+                <td>{{ drive.role }}</td>
+                <td>{{ drive.package }}</td>
+                <td>{{ drive.drive_date }}</td>
+                <td><span class="badge {% if drive.status == 'open' %}badge-success{% else %}badge-danger{% endif %}">{{ drive.status|upper }}</span></td>
+                <td>
+                    <a href="{% url 'placements:drive_applicants' drive.id %}">Applicants</a> |
+                    <a href="{% url 'placements:drive_edit' drive.id %}">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Branch-wise Stats -->
+<div class="section-header">
+    <h2>Branch-wise Placement</h2>
+</div>
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr><th>Branch</th><th>Total</th><th>Placed</th><th>Placement %</th></tr>
+        </thead>
+        <tbody>
+            {% for row in branch_data %}
+            <tr>
+                <td>{{ row.branch }}</td>
+                <td>{{ row.total }}</td>
+                <td>{{ row.placed }}</td>
+                <td>
+                    {% if row.total > 0 %}
+                        {{ row.placed|floatformat:0 }}/{{ row.total }}
+                        ({% widthratio row.placed row.total 100 %}%)
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

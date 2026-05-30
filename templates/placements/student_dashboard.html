@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Hello, {{ profile.full_name }} 👋</h1>
+    <p>{{ profile.get_branch_display }} | CGPA: <strong>{{ profile.cgpa }}</strong></p>
+</div>
+
+<!-- Stats Row -->
+<div class="stats-row">
+    <div class="stat-card">
+        <span class="stat-num">{{ stats.total }}</span>
+        <span class="stat-label">Applied</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-num">{{ stats.shortlisted }}</span>
+        <span class="stat-label">Shortlisted</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-num">{{ stats.selected }}</span>
+        <span class="stat-label">Selected</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-num">{{ eligible_drives|length }}</span>
+        <span class="stat-label">Open Drives</span>
+    </div>
+</div>
+
+<!-- Eligible Drives -->
+<div class="section-header">
+    <h2>Open Drives – You're Eligible</h2>
+</div>
+
+{% if eligible_drives %}
+<div class="drive-grid">
+    {% for drive in eligible_drives %}
+    <div class="drive-card">
+        <div class="drive-card-header">
+            <h3>{{ drive.company.name }}</h3>
+            <span class="badge badge-primary">{{ drive.status|upper }}</span>
+        </div>
+        <p class="drive-role">{{ drive.role }}</p>
+        <div class="drive-meta">
+            <span>💰 {{ drive.package }}</span>
+            <span>📅 {{ drive.drive_date }}</span>
+            {% if drive.location %}<span>📍 {{ drive.location }}</span>{% endif %}
+        </div>
+        <div class="drive-eligibility">
+            <small>Min CGPA: {{ drive.min_cgpa }} | Branches: {{ drive.eligible_branches }}</small>
+        </div>
+        {% if drive.id in applied_ids %}
+            <button class="btn btn-disabled" disabled>✔ Applied</button>
+        {% else %}
+            <a href="{% url 'placements:apply_drive' drive.id %}" class="btn btn-primary">Apply Now</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No open drives match your eligibility right now. Check back later!</p>
+</div>
+{% endif %}
+{% endblock %}

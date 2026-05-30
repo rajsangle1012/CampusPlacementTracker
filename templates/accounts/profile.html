@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Profile</h1>
+    <p>Keep your profile updated for better placement opportunities.</p>
+</div>
+
+<div class="card">
+    <div class="profile-header">
+        <div class="avatar">{{ profile.full_name|first }}</div>
+        <div>
+            <h2>{{ profile.full_name }}</h2>
+            <p>{{ profile.roll_number }} | {{ profile.get_branch_display }}</p>
+            <span class="badge {% if profile.is_placed %}badge-success{% else %}badge-warning{% endif %}">
+                {% if profile.is_placed %}✅ Placed{% else %}🔍 Seeking{% endif %}
+            </span>
+        </div>
+    </div>
+
+    <form method="POST" action="{% url 'accounts:profile' %}">
+        {% csrf_token %}
+        <div class="form-row">
+            {% for field in form %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<span class="error">{{ field.errors }}</span>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

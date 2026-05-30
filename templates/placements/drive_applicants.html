@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Applicants – {{ drive }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{{ drive.company.name }} – {{ drive.role }}</h1>
+        <p>{{ drive.drive_date }} | Min CGPA: {{ drive.min_cgpa }} | {{ drive.eligible_branches }}</p>
+    </div>
+    <a href="{% url 'placements:drive_list' %}" class="btn btn-outline">← Drives</a>
+</div>
+
+{% if applications %}
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Roll No</th>
+                <th>Branch</th>
+                <th>CGPA</th>
+                <th>Resume</th>
+                <th>Applied On</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in applications %}
+            <tr>
+                <td><strong>{{ app.student.full_name }}</strong></td>
+                <td>{{ app.student.roll_number }}</td>
+                <td>{{ app.student.branch }}</td>
+                <td>{{ app.student.cgpa }}</td>
+                <td>
+                    {% if app.student.resume_link %}
+                        <a href="{{ app.student.resume_link }}" target="_blank">View →</a>
+                    {% else %}—{% endif %}
+                </td>
+                <td>{{ app.applied_at|date:"d M Y" }}</td>
+                <td>
+                    <span class="status-badge status-{{ app.status }}">
+                        {{ app.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'placements:update_application' app.id %}" class="btn btn-sm btn-outline">
+                        Update
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No students have applied to this drive yet.</p>
+</div>
+{% endif %}
+{% endblock %}

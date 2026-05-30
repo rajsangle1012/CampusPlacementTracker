@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Student Directory{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Student Directory</h1>
+    <p>Filter students for shortlisting.</p>
+</div>
+
+<!-- Filter Form -->
+<div class="card filter-card">
+    <form method="GET" class="filter-form">
+        {% for field in filter_form %}
+        <div class="form-group">
+            <label>{{ field.label }}</label>
+            {{ field }}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="{% url 'placements:student_list' %}" class="btn btn-outline">Reset</a>
+    </form>
+</div>
+
+<p class="result-count">Showing <strong>{{ students.count }}</strong> student(s)</p>
+
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Roll No</th>
+                <th>Branch</th>
+                <th>CGPA</th>
+                <th>Skills</th>
+                <th>Grad Year</th>
+                <th>Resume</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td><strong>{{ student.full_name }}</strong></td>
+                <td>{{ student.roll_number }}</td>
+                <td>{{ student.branch }}</td>
+                <td>{{ student.cgpa }}</td>
+                <td><small>{{ student.skills|default:"—" }}</small></td>
+                <td>{{ student.graduation_year }}</td>
+                <td>
+                    {% if student.resume_link %}
+                        <a href="{{ student.resume_link }}" target="_blank">View →</a>
+                    {% else %}—{% endif %}
+                </td>
+                <td>
+                    <span class="badge {% if student.is_placed %}badge-success{% else %}badge-warning{% endif %}">
+                        {% if student.is_placed %}Placed{% else %}Seeking{% endif %}
+                    </span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="8" class="empty-row">No students match the filter.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

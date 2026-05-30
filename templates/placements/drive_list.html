@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}All Drives{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Placement Drives</h1>
+    <a href="{% url 'placements:drive_create' %}" class="btn btn-primary">➕ Add Drive</a>
+</div>
+
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Package</th>
+                <th>Min CGPA</th>
+                <th>Branches</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Applicants</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for drive in drives %}
+            <tr>
+                <td><strong>{{ drive.company.name }}</strong></td>
+                <td>{{ drive.role }}</td>
+                <td>{{ drive.package }}</td>
+                <td>{{ drive.min_cgpa }}</td>
+                <td><small>{{ drive.eligible_branches }}</small></td>
+                <td>{{ drive.drive_date }}</td>
+                <td><span class="badge {% if drive.status == 'open' %}badge-success{% else %}badge-danger{% endif %}">{{ drive.status|upper }}</span></td>
+                <td>
+                    <a href="{% url 'placements:drive_applicants' drive.id %}">
+                        {{ drive.applications.count }} applicant(s)
+                    </a>
+                </td>
+                <td class="action-btns">
+                    <a href="{% url 'placements:drive_edit' drive.id %}" class="btn btn-sm btn-outline">Edit</a>
+                    <a href="{% url 'placements:drive_delete' drive.id %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="9" class="empty-row">No drives found. Add one above!</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Update Application{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Update Application Status</h1>
+    <a href="{% url 'placements:drive_applicants' application.drive.id %}" class="btn btn-outline">← Back</a>
+</div>
+
+<div class="card">
+    <div class="application-info">
+        <p><strong>Student:</strong> {{ application.student.full_name }} ({{ application.student.roll_number }})</p>
+        <p><strong>Drive:</strong> {{ application.drive.company.name }} – {{ application.drive.role }}</p>
+        <p><strong>Applied:</strong> {{ application.applied_at|date:"d M Y" }}</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label>{{ field.label }}</label>
+            {{ field }}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Update Status</button>
+    </form>
+</div>
+{% endblock %}

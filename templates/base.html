@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Campus Placement Tracker{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- ── Navigation ─────────────────────────────────────────────────────────── -->
+<nav class="navbar">
+    <div class="nav-brand">🎓 CampusPlacementTracker</div>
+    <div class="nav-links">
+        {% if user.is_authenticated %}
+            {% if user.is_student %}
+                <a href="{% url 'placements:student_dashboard' %}">Dashboard</a>
+                <a href="{% url 'placements:my_applications' %}">My Applications</a>
+                <a href="{% url 'accounts:profile' %}">Profile</a>
+            {% else %}
+                <a href="{% url 'placements:tpo_dashboard' %}">Dashboard</a>
+                <a href="{% url 'placements:drive_list' %}">Drives</a>
+                <a href="{% url 'placements:student_list' %}">Students</a>
+            {% endif %}
+            <span class="nav-user">Hi, {{ user.username }}</span>
+            <a href="{% url 'accounts:logout' %}" class="btn btn-outline">Logout</a>
+        {% else %}
+            <a href="{% url 'accounts:login' %}">Login</a>
+            <a href="{% url 'accounts:register' %}" class="btn btn-primary">Register</a>
+        {% endif %}
+    </div>
+</nav>
+
+<!-- ── Flash Messages ──────────────────────────────────────────────────────── -->
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- ── Main Content ────────────────────────────────────────────────────────── -->
+<main class="container">
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+    <p>Campus Placement Tracker &copy; 2025</p>
+</footer>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>
